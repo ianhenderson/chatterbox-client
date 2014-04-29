@@ -3,16 +3,24 @@ var app;
 $(document).ready(function(){
   app = {};
   app.server = 'https://api.parse.com/1/classes/chatterbox';
+  app.username = 'joe';
   app.friends = [];
   app.init = function(){};
-  app.tweets = [];
-  app.send = function(message){
+  app.send = function(text){
+    var message = {
+      'username':  'username',
+      'text': text,
+      'roomname': 'lobby'
+    };
+
     $.ajax({
+      'data': JSON.stringify(message),
       'type': 'POST',
       'url': 'https://api.parse.com/1/classes/chatterbox',
-      'data': JSON.stringify(message),
       'contentType': 'application/json',
-      'success': console.log(message)
+      'success': function(response){
+        console.log(response);
+      }
     });
   };
 
@@ -20,16 +28,14 @@ $(document).ready(function(){
     app.clearMessages();
     $.ajax(app.server, {
       'url': 'https://api.parse.com/1/classes/chatterbox',
-      'data': 'application/json',
+      'data': {'order': '-createdAt'},
       'success': function(data){
-        app.tweets = [];
           for (var i = 0; i< data.results.length; i++){
-            // app.tweets.push(data.results[i]);
             app.addMessage(data.results[i]);
           }
+          console.log(data);
         }
     });
-
   };
 
   app.clearMessages = function(){
@@ -55,7 +61,6 @@ $(document).ready(function(){
       var friend = $(e.target).text();
       app.addFriend(friend);
     });
-
   };
 
   app.addRoom = function(roomName){
@@ -69,7 +74,6 @@ $(document).ready(function(){
   };
 
   app.handleSubmit = function(text){
-    // debugger;
     app.send(text);
   };
 
@@ -78,44 +82,8 @@ $(document).ready(function(){
     app.handleSubmit(message);
   } );
 
-  app.refreshDisplay = function(){
-    var tweet = d3.select('#chats')
-                  .selectAll('div')
-                  .data(app.tweets);
-
-    tweet.append('div')
-         .style('class', function(d){return d.roomname;})
-         .each(function(d) {
-          d3.select(this)
-            .append('div')
-            .attr('class', 'username')
-            .text(d.username)
-          d3.select(this)
-            .append('div')
-            .attr('class', 'tweetText')
-            .text(': ' + d.text)
-         } );
-
-    tweet.enter()
-         .append('div')
-         .style('class', function(d){return d.roomname;})
-         .each(function(d) {
-          d3.select(this)
-            .append('div')
-            .attr('class', 'username')
-            .text(d.username)
-          d3.select(this)
-            .append('div')
-            .attr('class', 'tweetText')
-            .text(': ' + d.text)
-         } );
-  };
-
-
-
-// setInterval( function(){
-//   app.fetch();
-//   app.refreshDisplay();
-// }, 2000);
+setInterval( function(){
+  app.fetch();
+}, 2000);
 
 });
