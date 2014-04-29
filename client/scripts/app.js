@@ -5,14 +5,22 @@ $(document).ready(function(){
   app.server = 'https://api.parse.com/1/classes/chatterbox';
   app.username = 'joe';
   app.tweets = [];
+  app.rooms = [];
+  app.currentRoom = 'lobby';
   app.friends = [];
   app.lastMessage = '2013';
+
+  app.username = prompt("Please enter your name:", "visitor") || "visitor";
+  // app.currentRoom = prompt("Please enter your name:", "visitor") || "visitor";
+
+
+
   app.init = function(){};
   app.send = function(text){
     var message = {
-      'username':  'username',
+      'username':  app.username,
       'text': text,
-      'roomname': 'lobby'
+      'roomname': app.currentRoom
     };
 
     $.ajax({
@@ -59,7 +67,7 @@ $(document).ready(function(){
   };
 
   app.addMessage = function(message){
-    // app.lastMessage = message.createdAt;
+    console.log(message);
     $('<div/>', {
       id: 'tweet'
     }).appendTo("#chats");
@@ -78,6 +86,14 @@ $(document).ready(function(){
       var friend = $(e.target).text();
       app.addFriend(friend);
     });
+
+    if (app.rooms.indexOf(message.roomname) === -1){
+      $('#roomSelector').append($('<option/>', {
+        value: message.roomname,
+        text: message.roomname
+      }));
+      app.rooms.push(message.roomname);
+    }
   };
 
   // app.refreshDisplay = function(){
