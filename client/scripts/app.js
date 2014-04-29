@@ -1,12 +1,11 @@
 // YOUR CODE HERE:
 var app;
 $(document).ready(function(){
-  app = {
-  };
-
+  app = {};
+  app.server = 'https://api.parse.com/1/classes/chatterbox';
   app.friends = [];
   app.init = function(){};
-
+  app.tweets = [];
   app.send = function(message){
     $.ajax({
       'type': 'POST',
@@ -16,7 +15,17 @@ $(document).ready(function(){
   };
 
   app.fetch = function(){
-    $.ajax();
+    $.ajax({
+      'url': 'https://api.parse.com/1/classes/chatterbox',
+      'data': 'application/json',
+      'success': function(data){
+        app.tweets = [];
+          for (var i = 0; i< data.results.length; i++){
+            app.tweets.push(data.results[i]);
+          }
+        }
+    });
+
   };
 
   app.clearMessages = function(){
@@ -52,21 +61,32 @@ $(document).ready(function(){
   };
 
   app.addFriend = function(friendName){
-    // debugger;
     app.friends.push(friendName);
   };
 
   app.handleSubmit = function(text){
-    // var message = $('#inputBox').val();
-    // debugger;
+    debugger;
     app.send(text);
-
   };
 
-  $('form').submit( function(){
-    var text = $(this).val();
-    app.handleSubmit(text);
+  $('#button').click( function(){
+    var message = $('#inputBox').val();
+    app.handleSubmit(message);
   } );
+
+app.refreshDisplay = function(){
+  d3.select('#chats').selectAll('div')
+                     .data(app.tweets)
+                     .append('div')
+                     .text(function(d){return d.username + ': ' + d.text;})
+
+  d3.select('#chats').selectAll('div')
+                     .data(app.tweets)
+                     .enter()
+                     .append('div')
+                     .text(function(d){return d.username + ': ' + d.text;})
+
+};
 
 
 
