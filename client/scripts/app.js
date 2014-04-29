@@ -10,7 +10,9 @@ $(document).ready(function(){
     $.ajax({
       'type': 'POST',
       'url': 'https://api.parse.com/1/classes/chatterbox',
-      'data': JSON.stringify(message)
+      'data': JSON.stringify(message),
+      'contentType': 'application/json',
+      'success': console.log(message)
     });
   };
 
@@ -74,20 +76,44 @@ $(document).ready(function(){
     app.handleSubmit(message);
   } );
 
-app.refreshDisplay = function(){
-  d3.select('#chats').selectAll('div')
-                     .data(app.tweets)
-                     .append('div')
-                     .text(function(d){return d.username + ': ' + d.text;})
+  app.refreshDisplay = function(){
+    var tweet = d3.select('#chats')
+                  .selectAll('div')
+                  .data(app.tweets)
 
-  d3.select('#chats').selectAll('div')
-                     .data(app.tweets)
-                     .enter()
-                     .append('div')
-                     .text(function(d){return d.username + ': ' + d.text;})
+    tweet.append('div')
+         .style('class', function(d){return d.roomname;})
+         .each(function(d) {
+          d3.select(this)
+            .append('div')
+            .attr('class', 'username')
+            .text(d.username)
+          d3.select(this)
+            .append('div')
+            .attr('class', 'tweetText')
+            .text(': ' + d.text)
+         } )
 
-};
+    tweet.enter()
+         .append('div')
+         .style('class', function(d){return d.roomname;})
+         .each(function(d) {
+          d3.select(this)
+            .append('div')
+            .attr('class', 'username')
+            .text(d.username)
+          d3.select(this)
+            .append('div')
+            .attr('class', 'tweetText')
+            .text(': ' + d.text)
+         } )
+  };
 
 
+
+// setInterval( function(){
+//   app.fetch();
+//   app.refreshDisplay();
+// }, 2000);
 
 });

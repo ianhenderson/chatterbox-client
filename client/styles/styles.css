@@ -6,7 +6,7 @@ body {
 }
 
 #main {
-    width: 500px;
+    width: 1000px;
     margin: auto;
     text-align: left;
     background: white;
@@ -83,8 +83,9 @@ form input[type=text] {
     padding: 10px;
 }
 
-.username .tweetText {
+.username {
     display: inline;
+    float: left;
 }
 
 #roomSelect {
