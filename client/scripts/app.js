@@ -4,7 +4,9 @@ $(document).ready(function(){
   app = {};
   app.server = 'https://api.parse.com/1/classes/chatterbox';
   app.username = 'joe';
+  app.tweets = [];
   app.friends = [];
+  app.lastMessage = '2013';
   app.init = function(){};
   app.send = function(text){
     var message = {
@@ -25,17 +27,31 @@ $(document).ready(function(){
   };
 
   app.fetch = function(){
-    app.clearMessages();
+    // app.clearMessages();
     $.ajax(app.server, {
       'url': 'https://api.parse.com/1/classes/chatterbox',
       'data': {'order': '-createdAt'},
       'success': function(data){
           for (var i = 0; i< data.results.length; i++){
-            app.addMessage(data.results[i]);
+            // console.log(data.results[i].createdAt);
+            // console.log( "LASTTWEET IS:" + app.lastMessage );
+            if (data.results[i].createdAt > app.lastMessage){
+              app.addMessage(data.results[i]);
+              app.lastMessage = data.results[i].createdAt;
+            }
+            // app.tweets.push(data.results[i]);
           }
-          console.log(data);
+          // console.log(data);
         }
     });
+    // app.refreshDisplay();
+
+    // for (var i = 0; i < app.tweets.length; i++){
+    //   if (app.tweets[i].createdAt > app.lastMessage){
+    //     app.addMessage(app.tweets[i]);
+    //   }
+    // }
+
   };
 
   app.clearMessages = function(){
@@ -43,6 +59,7 @@ $(document).ready(function(){
   };
 
   app.addMessage = function(message){
+    // app.lastMessage = message.createdAt;
     $('<div/>', {
       id: 'tweet'
     }).appendTo("#chats");
@@ -62,6 +79,41 @@ $(document).ready(function(){
       app.addFriend(friend);
     });
   };
+
+  // app.refreshDisplay = function(){
+  //   var tweet = d3.select('#chats')
+  //                 .selectAll('div')
+  //                 .data(app.tweets)
+
+  //   tweet.append('div')
+  //        .style('class', function(d){return d.roomname;})
+  //        .each(function(d) {
+  //         // d3.select(this)
+  //         //   .append('div')
+  //         //   .attr('class', 'username')
+  //         //   .text(d.username)
+  //         d3.select(this)
+  //           .append('div')
+  //           .attr('class', 'tweetText')
+  //           .text(d.username + ': ' + d.text)
+  //        } )
+
+  //   tweet.enter()
+  //        .append('div')
+  //        .style('class', function(d){return d.roomname;})
+  //        .each(function(d) {
+  //         // d3.select(this)
+  //         //   .append('div')
+  //         //   .attr('class', 'username')
+  //         //   .text(d.username)
+  //         d3.select(this)
+  //           .append('div')
+  //           .attr('class', 'tweetText')
+  //           .text(d.username + ': ' + d.text)
+  //        } )
+
+  //   tweet.exit().remove();
+  // };
 
   app.addRoom = function(roomName){
     $('<div/>', {
@@ -84,6 +136,6 @@ $(document).ready(function(){
 
 setInterval( function(){
   app.fetch();
-}, 2000);
+}, 4000);
 
 });
