@@ -17,13 +17,15 @@ $(document).ready(function(){
   };
 
   app.fetch = function(){
-    $.ajax({
+    app.clearMessages();
+    $.ajax(app.server, {
       'url': 'https://api.parse.com/1/classes/chatterbox',
       'data': 'application/json',
       'success': function(data){
         app.tweets = [];
           for (var i = 0; i< data.results.length; i++){
-            app.tweets.push(data.results[i]);
+            // app.tweets.push(data.results[i]);
+            app.addMessage(data.results[i]);
           }
         }
     });
@@ -67,7 +69,7 @@ $(document).ready(function(){
   };
 
   app.handleSubmit = function(text){
-    debugger;
+    // debugger;
     app.send(text);
   };
 
@@ -79,7 +81,7 @@ $(document).ready(function(){
   app.refreshDisplay = function(){
     var tweet = d3.select('#chats')
                   .selectAll('div')
-                  .data(app.tweets)
+                  .data(app.tweets);
 
     tweet.append('div')
          .style('class', function(d){return d.roomname;})
@@ -92,7 +94,7 @@ $(document).ready(function(){
             .append('div')
             .attr('class', 'tweetText')
             .text(': ' + d.text)
-         } )
+         } );
 
     tweet.enter()
          .append('div')
@@ -106,7 +108,7 @@ $(document).ready(function(){
             .append('div')
             .attr('class', 'tweetText')
             .text(': ' + d.text)
-         } )
+         } );
   };
 
 
