@@ -6,6 +6,7 @@ $(document).ready(function(){
 
   app.friends = [];
   app.init = function(){};
+
   app.send = function(message){
     $.ajax({
       'type': 'POST',
@@ -51,9 +52,22 @@ $(document).ready(function(){
   };
 
   app.addFriend = function(friendName){
-    debugger;
+    // debugger;
     app.friends.push(friendName);
   };
+
+  app.handleSubmit = function(text){
+    // var message = $('#inputBox').val();
+    // debugger;
+    app.send(text);
+
+  };
+
+  $('form').submit( function(){
+    var text = $(this).val();
+    app.handleSubmit(text);
+  } );
+
 
 
 });
